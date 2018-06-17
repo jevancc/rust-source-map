@@ -1,0 +1,6 @@
+[package]
+name = "source-map"
+version = "0.1.0"
+authors = ["Jevan Chan <jevan.cnchan@gmail.com>"]
+
+[dependencies]
