@@ -1,7 +1,7 @@
 use std::cmp::Ordering;
 use std::rc::Rc;
 
-#[derive(Eq, PartialEq, Clone)]
+#[derive(Debug, Eq, PartialEq, Clone)]
 pub struct Mapping {
     // (line, column)
     pub generated: (usize, usize),

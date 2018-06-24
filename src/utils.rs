@@ -4,7 +4,8 @@ pub fn relative(root: &str, path: &str) -> String {
     let mut root = String::from(root);
     if root.is_empty() {
         root.push('.');
-    } if root.ends_with('/') {
+    }
+    if root.ends_with('/') {
         root.pop();
     }
 

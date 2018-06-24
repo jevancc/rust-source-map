@@ -1,5 +1,6 @@
-use mapping::{Mapping};
+use mapping::Mapping;
 
+#[derive(Debug)]
 pub struct MappingList {
     pub list: Vec<Mapping>,
     sorted: bool,
@@ -11,7 +12,7 @@ impl MappingList {
         MappingList {
             list: Vec::new(),
             sorted: true,
-            last: None
+            last: None,
         }
     }
 

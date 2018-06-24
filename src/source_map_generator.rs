@@ -1,13 +1,15 @@
 use linked_hash_map::LinkedHashMap;
-use std::rc::Rc;
-use vlq;
-use utils;
-use mapping::{Mapping};
-use source_map::{SrcMap};
-use mapping_list::{MappingList};
+use mapping::Mapping;
+use mapping_list::MappingList;
+use source_map::SrcMap;
 use std::collections::HashMap;
+use std::rc::Rc;
 use std::str;
+use utils;
+use vlq;
+use StringPtr;
 
+#[derive(Debug)]
 pub struct SourceMapGenerator {
     file: Option<Rc<String>>,
     source_root: Option<Rc<String>>,
@@ -19,7 +21,13 @@ pub struct SourceMapGenerator {
 }
 
 impl SourceMapGenerator {
-    pub fn new(file: Option<Rc<String>>, source_root: Option<Rc<String>>, skip_validation: bool) -> SourceMapGenerator {
+    pub fn new(
+        file: Option<StringPtr>,
+        source_root: Option<StringPtr>,
+        skip_validation: bool,
+    ) -> SourceMapGenerator {
+        let file = file.map(|sp| sp.to_ptr());
+        let source_root = source_root.map(|sp| sp.to_ptr());
         SourceMapGenerator {
             file,
             source_root,
@@ -49,7 +57,14 @@ impl SourceMapGenerator {
         self.mappings.add(map);
     }
 
-    pub fn set_source_content(&mut self, source_file: Rc<String>, source_content: Option<Rc<String>>) {
+    pub fn set_source_content(
+        &mut self,
+        source_file: StringPtr,
+        source_content: Option<StringPtr>,
+    ) {
+        let source_file = source_file.to_ptr();
+        let source_content = source_content.map(|sp| sp.to_ptr());
+
         let source = if let Some(root) = self.source_root.clone() {
             Rc::new(utils::relative(&root, &source_file))
         } else {
@@ -75,8 +90,6 @@ impl SourceMapGenerator {
         for src in self.sources.keys() {
             if let Some(content) = self.sources_contents.get(src) {
                 sources_content.push((**content).clone());
-            } else {
-                sources_content.push(String::new());
             }
         }
         return SrcMap {
@@ -87,7 +100,7 @@ impl SourceMapGenerator {
             file,
             source_root,
             sources_content,
-        }
+        };
     }
 
     fn validate_mapping(map: &Mapping) -> Result<(), &'static str> {
@@ -124,15 +137,15 @@ impl SourceMapGenerator {
                 }
                 previous_generated.0 = mapping.generated.0;
             } else if i > 0 {
-            //     if (
-            //         !util.compareByGeneratedPositionsInflated(
-            //             mapping,
-            //             mappings[i - 1]
-            //         )
-            //     ) {
-            //         continue;
-            //     }
-            // }
+                //     if (
+                //         !util.compareByGeneratedPositionsInflated(
+                //             mapping,
+                //             mappings[i - 1]
+                //         )
+                //     ) {
+                //         continue;
+                //     }
+                // }
                 buf.push(b',');
             }
 
@@ -143,10 +156,7 @@ impl SourceMapGenerator {
             previous_generated.1 = mapping.generated.1;
             if let Some(ref source) = mapping.source {
                 let source_idx = self.sources.get(source).unwrap();
-                vlq::encode(
-                    *source_idx as i64 - previous_source as i64,
-                    &mut buf,
-                ).unwrap();
+                vlq::encode(*source_idx as i64 - previous_source as i64, &mut buf).unwrap();
                 previous_source = *source_idx;
 
                 let mapping_original = mapping.original.unwrap();
@@ -165,10 +175,7 @@ impl SourceMapGenerator {
 
                 if let Some(ref name) = mapping.name {
                     let name_idx = self.names.get(name).unwrap();
-                    vlq::encode(
-                        *name_idx as i64 - previous_name as i64,
-                        &mut buf,
-                    ).unwrap();
+                    vlq::encode(*name_idx as i64 - previous_name as i64, &mut buf).unwrap();
                     previous_name = *name_idx;
                 }
             }

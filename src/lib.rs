@@ -1,21 +1,22 @@
-extern crate vlq;
 extern crate linked_hash_map;
 extern crate regex;
+extern crate vlq;
 #[macro_use]
 extern crate lazy_static;
 #[macro_use]
 extern crate serde_derive;
 
-mod source_node;
-mod source_map_generator;
 mod mapping;
 mod mapping_list;
 mod source_map;
+mod source_map_generator;
+mod source_node;
 mod utils;
 
-use std::rc::Rc;
-pub use source_node::*;
+pub use mapping::Mapping;
 pub use source_map_generator::*;
+pub use source_node::*;
+use std::rc::Rc;
 
 pub enum Node {
     NSourceNode(SourceNode),
