@@ -1,6 +1,11 @@
 [package]
+authors = ["Jevan Chan <jevan.cnchan@gmail.com>"]
 name = "source-map"
 version = "0.1.0"
-authors = ["Jevan Chan <jevan.cnchan@gmail.com>"]
-
 [dependencies]
+lazy_static = "1.0"
+linked-hash-map = "0.5.1"
+regex = "1.0.0"
+serde = "1.0.66"
+serde_derive = "1.0.66"
+vlq = "0.5.1"
