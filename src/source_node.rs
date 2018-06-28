@@ -6,6 +6,7 @@ use std::rc::Rc;
 use Node;
 use StringPtr;
 
+#[derive(Clone)]
 pub struct SourceNode {
     pub children: Vec<Node>,
     pub source_contents: HashMap<Rc<String>, Rc<String>>,
@@ -75,6 +76,17 @@ impl SourceNode {
             source: context.generated_code,
             map: context.map.to_source_map(),
         }
+    }
+
+    pub fn to_source_map_generator(&self, file: Option<StringPtr>, source_root: Option<StringPtr>)
+        -> SourceMapGenerator {
+        let file = file.map(|sp| sp.to_ptr());
+        let source_root = source_root.map(|sp| sp.to_ptr());
+        let skip_validation = true;
+        let mut context = ToSourceMapContext::new(file, source_root, skip_validation);
+        self.walk(&mut context);
+
+        context.map
     }
 
     fn walk<T: WalkFunction>(&self, context: &mut T) {
