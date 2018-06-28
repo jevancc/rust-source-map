@@ -18,6 +18,7 @@ pub use source_map_generator::*;
 pub use source_node::*;
 use std::rc::Rc;
 
+#[derive(Clone)]
 pub enum Node {
     NSourceNode(SourceNode),
     NString(String),
@@ -25,6 +26,7 @@ pub enum Node {
     NNodeVec(Vec<Node>),
 }
 
+#[derive(Clone)]
 pub enum StringPtr {
     Str(String),
     Ptr(Rc<String>),
