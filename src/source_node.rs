@@ -6,7 +6,7 @@ use std::rc::Rc;
 use Node;
 use StringPtr;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct SourceNode {
     pub children: Vec<Node>,
     pub source_contents: HashMap<Rc<String>, Rc<String>>,

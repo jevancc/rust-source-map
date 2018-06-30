@@ -18,7 +18,7 @@ pub use source_map_generator::*;
 pub use source_node::*;
 use std::rc::Rc;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub enum Node {
     NSourceNode(SourceNode),
     NString(String),
