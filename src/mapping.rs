@@ -10,6 +10,17 @@ pub struct Mapping {
     pub original: Option<(usize, usize)>,
 }
 
+impl Mapping {
+    pub fn from_tuple(input: (String, usize, usize, usize, usize, Option<String>)) -> Mapping {
+        Mapping {
+            generated: (input.1, input.2),
+            source: Some(Rc::new(input.0)),
+            name: input.5.map(|s| Rc::new(s)),
+            original: Some((input.3, input.4)),
+        }
+    }
+}
+
 impl Ord for Mapping {
     fn cmp(&self, other: &Mapping) -> Ordering {
         let cmp = self.generated.cmp(&other.generated);
