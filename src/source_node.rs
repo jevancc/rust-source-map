@@ -194,7 +194,7 @@ impl SourceNode {
                 remaining += &next_line.0;
                 next_line = shift_lines();
             }
-            node.add(Node::NString(next_line.0));
+            node.add(Node::NString(remaining));
         }
 
         for source in source_map.sources.into_iter() {
