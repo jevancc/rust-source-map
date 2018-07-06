@@ -108,8 +108,7 @@ impl SourceNode {
         }
     }
 
-    pub fn from_string_with_source_map(code: &str, source_map_consumer_json: &str) -> SourceNode {
-        let source_map: SourceMapConsumer = serde_json::from_str(source_map_consumer_json).unwrap();
+    pub fn from_string_with_source_map(code: &str, generator: SourceMapGenerator) -> SourceNode {
         let mut node = SourceNode::new(None, None, None, None);
 
         let mut lines = code.split('\n').peekable();
@@ -127,12 +126,8 @@ impl SourceNode {
         };
         let mut next_line = shift_lines();
 
-        for mapping in source_map.mappings.into_iter() {
-            let generated_position = mapping.0;
-            let source = mapping.1;
-            let name = mapping.2;
-            let original_position = mapping.3;
-
+        for mapping in generator.mappings.list.into_iter() {
+            let generated_position = mapping.generated;
             if last_mapping.is_some() {
                 if last_generated_position.0 < generated_position.0 {
                     node.add_mapping_with_code(last_mapping, next_line.0);
@@ -151,12 +146,7 @@ impl SourceNode {
                     last_generated_position.1 = generated_position.1;
 
                     node.add_mapping_with_code(last_mapping, code);
-                    last_mapping = Some(Mapping {
-                        generated: generated_position,
-                        source: source.map(|s| Rc::new(s)),
-                        name: name.map(|s| Rc::new(s)),
-                        original: original_position,
-                    });
+                    last_mapping = Some(mapping);
                     continue;
                 }
             }
@@ -176,12 +166,7 @@ impl SourceNode {
                 next_line.0 = splitted.1;
                 last_generated_position.1 = generated_position.1;
             }
-            last_mapping = Some(Mapping {
-                generated: generated_position,
-                source: source.map(|s| Rc::new(s)),
-                name: name.map(|s| Rc::new(s)),
-                original: original_position,
-            });
+            last_mapping = Some(mapping);
         }
 
         if next_line.1 {
@@ -196,17 +181,7 @@ impl SourceNode {
             }
             node.add(Node::NString(remaining));
         }
-
-        for source in source_map.sources.into_iter() {
-            let file = source.0;
-            let content = source.1;
-            content.map(|content| {
-                node.set_source_content(
-                    StringPtr::Str(file),
-                    StringPtr::Str(content)
-                )
-            });
-        }
+        node.source_contents = generator.sources_contents;
         node
     }
 

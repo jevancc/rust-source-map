@@ -6,6 +6,7 @@ extern crate lazy_static;
 #[macro_use]
 extern crate serde_derive;
 extern crate serde_json;
+extern crate source_map_mappings;
 
 mod mapping;
 mod mapping_list;
@@ -14,6 +15,7 @@ mod source_map_consumer;
 mod source_map_generator;
 mod source_node;
 mod utils;
+mod from_source_map;
 
 pub use mapping::Mapping;
 pub use source_map_generator::*;

@@ -2,12 +2,14 @@ use linked_hash_map::LinkedHashMap;
 use mapping::Mapping;
 use mapping_list::MappingList;
 use source_map::SrcMap;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::rc::Rc;
 use std::str;
 use utils;
 use vlq;
 use StringPtr;
+use source_map_mappings::parse_mappings;
+use serde_json;
 
 #[derive(Debug)]
 pub struct SourceMapGenerator {
@@ -16,8 +18,8 @@ pub struct SourceMapGenerator {
     skip_validation: bool,
     sources: LinkedHashMap<Rc<String>, usize>,
     names: LinkedHashMap<Rc<String>, usize>,
-    mappings: MappingList,
-    sources_contents: HashMap<Rc<String>, Rc<String>>,
+    pub mappings: MappingList,
+    pub sources_contents: HashMap<Rc<String>, Rc<String>>,
 }
 
 impl SourceMapGenerator {
